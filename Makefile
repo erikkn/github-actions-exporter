@@ -13,7 +13,7 @@ tidy:
 	go mod tidy -v
 
 fmt:
-	go fmt github.com/erikkn/klaabu/...
+	go fmt github.com/erikkn/github-actions-exporter/...
 
 vendor:
 	go mod vendor
