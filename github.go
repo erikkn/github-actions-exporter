@@ -22,8 +22,6 @@ type Client struct {
 	Client *github.Client
 }
 
-//func NewClient(config) *github.Client <square bracket :P>
-
 // CreateClient creates a Github client
 func (c *Config) CreateClient() (*Client, error) {
 	if c.Token == "" {
