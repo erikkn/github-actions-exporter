@@ -26,7 +26,7 @@ func collectMetrics(t time.Duration) {
 
 		orgRunners, err := listOfOrgRunners()
 		if err != nil {
-			log.Fatalf("error setting listOfOrgRunners metric: %s", err)
+			log.Fatalf("error retrieving the list of organization errors: %s", err)
 		}
 
 		err = orgRunners.setRunnerStatusMetric()
@@ -56,18 +56,27 @@ func listOfOrgRunners() (*githubRunners, error) {
 	}, nil
 }
 
-// setRunnerStatusMetric sets the status of the runners; 0=offline, 1=idle/online, 2=active/busy.
+// setRunnerStatusMetric sets the status of the runners; 0=offline, 1=idle/online, 2=active/busy: https://docs.github.com/en/actions/hosting-your-own-runners/monitoring-and-troubleshooting-self-hosted-runners
+//
 func (r *githubRunners) setRunnerStatusMetric() error {
-
 	for _, v := range r.Runners.Runners {
 		if *v.Status == "online" || *v.Status == "idle" {
-			orgRunnerStatus.WithLabelValues(*v.Name, string(*v.ID)).Set(1)
+
+			if *v.Busy {
+				// Runner is online & busy (executing a job).
+				orgRunnerStatus.WithLabelValues(*v.Name, string(*v.ID)).Set(2)
+			} else {
+				// Runner is online & idle (waiting for job).
+				orgRunnerStatus.WithLabelValues(*v.Name, string(*v.ID)).Set(1)
+
+			}
 		} else if *v.Status == "offline" {
+
+			// Runner is offline.
 			orgRunnerStatus.WithLabelValues(*v.Name, string(*v.ID)).Set(0)
-		} else if *v.Status == "active" {
-			orgRunnerStatus.WithLabelValues(*v.Name, string(*v.ID)).Set(2)
 		} else {
-			return fmt.Errorf("runner %s is in an unknown state: %s", *v.Name, *v.Status)
+
+			return fmt.Errorf("unknown status detected: %s", *v.Status)
 		}
 	}
 
