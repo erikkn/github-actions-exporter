@@ -60,7 +60,7 @@ func listOfOrgRunners() (*githubRunners, error) {
 func (r *githubRunners) setRunnerStatusMetric() error {
 
 	for _, v := range r.Runners.Runners {
-		if *v.Status == "idle" {
+		if *v.Status == "online" || *v.Status == "idle" {
 			orgRunnerStatus.WithLabelValues(*v.Name, string(*v.ID)).Set(1)
 		} else if *v.Status == "offline" {
 			orgRunnerStatus.WithLabelValues(*v.Name, string(*v.ID)).Set(0)
