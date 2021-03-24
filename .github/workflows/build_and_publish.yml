@@ -1,0 +1,31 @@
+name: Build and Upload Image
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build_and_upload:
+    name: Build & Upload Exporter Image
+    runs-on: [self-hosted, eks-runner]
+    container: docker.tw.ee/k8s-deployer:3.8
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
+        with:
+          go-version: '^1.15.2'
+
+      - name: Format
+        run: make fmt
+
+      - name: Tests
+        run: make test
+
+      - name: Build
+        run: make build
+
+      - name: Build and Push Image
+        run: .github/workflows/build_and_publish.sh
+        env:
+          ARTIFACTORY_USER: ${{ secrets.ARTIFACTORY_USER }}
+          ARTIFACTORY_PASSWORD: ${{ secrets.ARTIFACTORY_PASSWORD }}
