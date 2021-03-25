@@ -8,7 +8,7 @@ echo "Building images"
 
 docker build --pull -t "${REGISTRY_URL}/actions-api-exporter:${TAG}" .
 
-echo "${REGISTRY_URL}" | docker login ${REGISTRY_URL} --username "${DEPLOY_REGISTRY_USERNAME}" --password-stdin
+echo "${DEPLOY_REGISTRY_PASSWORD}" | docker login ${REGISTRY_URL} --username "${DEPLOY_REGISTRY_USERNAME}" --password-stdin
 
 if [ "$CIRCLE_BRANCH" == "main" ]
 then
