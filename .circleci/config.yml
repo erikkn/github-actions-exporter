@@ -37,10 +37,12 @@ jobs:
 workflows:
   build_and_test:
     jobs:
-      - build
+      - build:
+          context: artifactory-deploy-docker
       - publish:
+          context: artifactory-deploy-docker
           requires:
             - build
           filters:
             branches:
-              only: master
+              only: main
