@@ -31,7 +31,7 @@ func collectMetrics(t time.Duration) {
 
 		err = orgRunners.setRunnerStatusMetric()
 		if err != nil {
-			log.Fatalf("error setting the runner status metrics:", err)
+			log.Fatalf("error setting the runner status metrics: %v", err)
 		}
 
 		time.Sleep(t)
@@ -64,16 +64,16 @@ func (r *githubRunners) setRunnerStatusMetric() error {
 
 			if *v.Busy {
 				// Runner is online & busy (executing a job).
-				orgRunnerStatus.WithLabelValues(*v.Name, string(*v.ID)).Set(2)
+				orgRunnerStatus.WithLabelValues(*v.Name, fmt.Sprint(*v.ID)).Set(2)
 			} else {
 				// Runner is online & idle (waiting for job).
-				orgRunnerStatus.WithLabelValues(*v.Name, string(*v.ID)).Set(1)
+				orgRunnerStatus.WithLabelValues(*v.Name, fmt.Sprint(*v.ID)).Set(1)
 
 			}
 		} else if *v.Status == "offline" {
 
 			// Runner is offline.
-			orgRunnerStatus.WithLabelValues(*v.Name, string(*v.ID)).Set(0)
+			orgRunnerStatus.WithLabelValues(*v.Name, fmt.Sprint(*v.ID)).Set(0)
 		} else {
 
 			return fmt.Errorf("unknown status detected: %s", *v.Status)
