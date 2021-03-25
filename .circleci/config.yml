@@ -1,0 +1,48 @@
+version: 2
+jobs:
+  build:
+    working_directory: ~/actions-exporter
+    docker:
+      - image: docker-hub.tw.ee/golang
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/actions-exporter
+      - run:
+          name: Format
+          command: make fmt
+      - run:
+          name: Tests
+          command: make test
+      - run:
+          name: Build
+          command: make build
+      - persist_to_workspace:
+          root: /
+          paths:
+            - '*'
+
+  publish:
+    working_directory: ~/actions-exporter
+    docker:
+      - image: docker.tw.ee/k8s-deployer:3.8
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/actions-exporter
+      - run:
+          name: Build and Push Image
+          command: .circleci/build_and_publish.sh
+
+workflows:
+  build_and_test:
+    jobs:
+      - build:
+          context: artifactory-deploy-docker
+      - publish:
+          context: artifactory-deploy-docker
+          requires:
+            - build
+          filters:
+            branches:
+              only: main
