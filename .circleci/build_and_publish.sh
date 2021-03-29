@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 REGISTRY_URL=docker.tw.ee
-COMMIT=${CIRCLIE_SHA1:0:8}
+COMMIT=${CIRCLE_SHA1:0:8}
 TAG=v0.1.0-${COMMIT}
 
 echo "Building images"
