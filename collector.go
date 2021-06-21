@@ -22,6 +22,8 @@ var orgRunnerStatus = prometheus.NewGaugeVec(prometheus.GaugeOpts{
 )
 
 func collectMetrics(t time.Duration) {
+	orgRunnerStatus.Reset()
+
 	for {
 
 		orgRunners, err := listOfOrgRunners()
@@ -33,6 +35,8 @@ func collectMetrics(t time.Duration) {
 		if err != nil {
 			log.Fatalf("error setting the runner status metrics: %v", err)
 		}
+
+		log.Printf("Fetched %d runners", orgRunners.TotalCount)
 
 		time.Sleep(t)
 	}
