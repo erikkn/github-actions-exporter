@@ -2,7 +2,7 @@
 
 REGISTRY_URL=docker.tw.ee
 COMMIT=${CIRCLE_SHA1:0:8}
-TAG=v0.1.0-${COMMIT}
+TAG=v0.2.0-${COMMIT}
 
 echo "Building images"
 
