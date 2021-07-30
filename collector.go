@@ -48,14 +48,28 @@ func init() {
 // listOfOrgRunners returns the runners in an organizations
 func listOfOrgRunners() (*githubRunners, error) {
 	ctx := context.Background()
+	opts := &github.ListOptions{
+		PerPage: 99,
+	}
 
-	r, _, err := ghClient.Client.Actions.ListOrganizationRunners(ctx, ghClient.Organization, nil)
-	if err != nil {
-		return nil, fmt.Errorf("error retrieving runners: %s", err)
+	var r []*github.Runner
+	for {
+		runners, resp, err := ghClient.Client.Actions.ListOrganizationRunners(ctx, ghClient.Organization, opts)
+		if err != nil {
+			return nil, fmt.Errorf("error retrieving runners: %s", err)
+		}
+		r = append(r, runners.Runners...)
+		if resp.NextPage == 0 {
+			break
+		}
+		opts.Page = resp.NextPage
 	}
 
 	return &githubRunners{
-		Runners: r,
+		&github.Runners{
+			Runners:    r,
+			TotalCount: len(r),
+		},
 	}, nil
 }
 
