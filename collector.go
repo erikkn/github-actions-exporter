@@ -81,8 +81,8 @@ func (r *githubRunners) setRunnerStatusMetric() error {
 		labels := []string{
 			*v.Name,
 			fmt.Sprint(*v.ID),
-			searchForLabel(v.Labels, []string{"small", "medium", "large", "xlarge"}, "n/a"),
-			searchForLabel(v.Labels, []string{"production", "staging"}, "n/a"),
+			searchForLabel(v.Labels, []string{"small", "medium", "large", "xlarge", "xxlarge}, "n/a"),
+			searchForLabel(v.Labels, []string{"production", "staging", "beta"}, "n/a"),
 			searchForLabel(v.Labels, []string{"self-hosted"}, "n/a"),
 		}
 
